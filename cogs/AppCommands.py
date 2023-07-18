@@ -16,11 +16,12 @@ class AppCommands(commands.Cog):
         if member is None:
             member = interaction.user
         elif member is not None:
+            user = interaction.user
             member = member
 
         avatar_embed = discord.Embed(title=f"{member.name}'s Avatar", color=discord.Color.random())
         avatar_embed.set_image(url=member.avatar)
-        avatar_embed.set_footer(text=f"Requested by {member.name}", icon_url=member.avatar)
+        avatar_embed.set_footer(text=f"Requested by {user.name}", icon_url=user.avatar)
 
         await interaction.response.send_message(embed=avatar_embed)
 
