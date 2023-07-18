@@ -25,5 +25,12 @@ class AppCommands(commands.Cog):
 
         await interaction.response.send_message(embed=avatar_embed)
 
+    @app_commands.command(name="ping", description="Sends the bot's latency in ms")
+    async def ping(self, interaction: discord.Interaction):
+        bot_latency = round(self.client.latency * 1000)
+
+        await interaction.response.send_message(f"Pong! {bot_latency}ms.")
+
+
 async def setup(client):
     await client.add_cog(AppCommands(client))
