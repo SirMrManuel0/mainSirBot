@@ -10,11 +10,14 @@ client = commands.Bot(command_prefix="$", intents=discord.Intents.all())
 
 @client.event
 async def on_ready():
+    print(f"#" * 20)
     print("Success: Bot is connected to Discord!")
+    print(f"#" * 20)
 
 async  def load():
     for filename in os.listdir("./cogs"):
         if filename.endswith(".py"):
+            print(filename)
             await client.load_extension(f"cogs.{filename[:-3]}")
 
 async def main():
