@@ -2,18 +2,24 @@ import discord
 from discord import app_commands
 from discord.ext import commands
 from credentials import apiToken
+import asyncio
+import os
 
 
-bot = commands.Bot(command_prefix="$", intents=discord.Intents.all())
+client = commands.Bot(command_prefix="$", intents=discord.Intents.all())
 
-@bot.event
+@client.event
 async def on_ready():
-    await bot.tree.sync()
+    print("Success: Bot is connected to Discord!")
 
-@bot.tree.command(name="ping", description="Sends the bot's latency in ms.")
-async def ping(interaction: discord.Interaction):
-    await interaction.response.send_message(f"Pong! {round(bot.latency) * 1000}ms.")
+async  def load():
+    for filename in os.listdir("./cogs"):
+        if filename.endswith(".py"):
+            await client.load_extension(f"cogs.{filename[:-3]}")
 
+async def main():
+    async with client:
+        await load()
+        await client.start(apiToken.discord_token)
 
-
-bot.run(apiToken.discord_token)
+asyncio.run(main())
