@@ -85,7 +85,7 @@ class RememberCommand(commands.Cog):
             count = 0
             for line in lines:
                 count += 1
-                if line == f"{name}:" and count % 2 == 0:
+                if line == f"{name}:\n" and count % 2 == 0:
                     break
             if count == len(lines):
                 await interaction.response.send_message(f"I can not remember something under the name: {name}.")
