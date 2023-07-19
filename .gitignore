@@ -3,5 +3,4 @@ venv/
 .idea/
 credentials/
 cogs/__pycache__/
-discord_storage_not_encrypted/
 __pycache__/
