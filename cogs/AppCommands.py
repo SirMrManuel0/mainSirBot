@@ -12,12 +12,13 @@ class AppCommands(commands.Cog):
         print(f"{__name__} loaded successfully!")
 
     @app_commands.command(name="avatar", description="Sends user's avatar in a embed (sends own avatar if user is left none)")
-    async def avatar(self, interaction: discord.Interaction, member: discord.Member=None):
+    async def avatar(self, interaction: discord.Interaction, member: discord.Member = None):
         if member is None:
             member = interaction.user
         elif member is not None:
-            user = interaction.user
             member = member
+
+        user = interaction.user
 
         avatar_embed = discord.Embed(title=f"{member.name}'s Avatar", color=discord.Color.random())
         avatar_embed.set_image(url=member.avatar)

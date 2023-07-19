@@ -3,6 +3,7 @@ from discord import app_commands
 from discord.ext import commands
 import os
 
+
 class RememberCommand(commands.Cog):
     def __init__(self, client):
         self.client = client
@@ -13,7 +14,7 @@ class RememberCommand(commands.Cog):
         print(f"{__name__} loaded successfully!")
 
     @app_commands.command(name="remember", description="give the bot something to remember")
-    async def remember(self, interaction: discord.Interaction, to_remember: str, name: str=None):
+    async def remember(self, interaction: discord.Interaction, to_remember: str, name: str = None):
         user_id = str(interaction.user.id)
 
         if not os.path.exists("discord_storage_not_encrypted/" + user_id + ".txt") and name is None:
@@ -64,8 +65,32 @@ class RememberCommand(commands.Cog):
                 await interaction.response.send_message(f"Under the name: {name}. I have remembered: {to_remember}.")
                 return
 
+    @app_commands.command(name="recall", description="remember what the bot saved")
+    async def recall(self, interaction: discord.Interaction, name: str = None):
+        user_id = str(interaction.user.id)
 
-
+        if not os.path.exists("discord_storage_not_encrypted/" + user_id + ".txt"):
+            await interaction.response.send_message(f"I can not remember anything.")
+            return
+        file = open("discord_storage_not_encrypted/" + user_id + ".txt", "r")
+        lines = file.readlines()
+        file.close()
+        if name is None and lines[0] == "":
+            await interaction.response.send_message(f"I can not remember anything. Maybe try using a name.")
+            return
+        elif name is None:
+            await interaction.response.send_message(f"I seem to remember: {lines[0]}.")
+            return
+        if name is not None:
+            count = 0
+            for line in lines:
+                count += 1
+                if line == f"{name}:" and count % 2 == 0:
+                    break
+            if count == len(lines):
+                await interaction.response.send_message(f"I can not remember something under the name: {name}.")
+                return
+            await interaction.response.send_message(f"Under the name: {name}. I seem to remember: {lines[count]}.")
 
 
 async def setup(client):
