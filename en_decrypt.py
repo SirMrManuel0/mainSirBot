@@ -1,6 +1,3 @@
-
-
-
 def encrypt(text, key):
     arr_text = text_in_numbers(text)
     ii = 0
@@ -25,7 +22,7 @@ def numbers_in_text(numbers):
 def text_in_numbers(text):
     text_in_number = ""
     for i in text:
-        text_in_number += ord(i)
+        text_in_number += str(ord(i)) + '_'
     return text_in_number.split('_')[:-1]
 
 
