@@ -20,28 +20,29 @@ class RememberCommand(commands.Cog):
         guild_id = interaction.guild_id
         user_id = interaction.user.id
 
-        rem_id = str(interaction.user.id) + str(guild_id)
         key = keyMaker.keyMaking(user_id, guild_id)
 
         encrypted = en_decrypt.encrypt(to_remember, key)
 
 
-        if not os.path.exists(f"discord_storage/{rem_id}.txt") and name is None:
-            with open(f"discord_storage/{rem_id}.txt", "w", encoding="utf-8") as file:
+        if not os.path.exists(f"discord_storage/{str(guild_id)}/{str(user_id)}.txt") and name is None:
+            os.mkdir(f"discord_storage/{str(guild_id)}/")
+            with open(f"discord_storage/{str(guild_id)}/{str(user_id)}.txt", "w", encoding="utf-8") as file:
                 file.write(encrypted)
             await interaction.response.send_message(f"I have remembered: {to_remember}.")
             return
-        elif not os.path.exists(f"discord_storage/{rem_id}.txt"):
-            with open(f"discord_storage/{rem_id}.txt", "w", encoding="utf-8") as file:
+        elif not os.path.exists(f"discord_storage/{str(guild_id)}/{str(user_id)}.txt"):
+            os.mkdir(f"discord_storage/{str(guild_id)}/")
+            with open(f"discord_storage/{str(guild_id)}/{str(user_id)}.txt", "w", encoding="utf-8") as file:
                 file.write(f"\n{name}:\n" + encrypted)
             await interaction.response.send_message(f"Under the name: {name}. I have remembered: {to_remember}.")
             return
-        file = open(f"discord_storage/{rem_id}.txt", "r", encoding="utf-8")
+        file = open(f"discord_storage/{str(guild_id)}/{str(user_id)}.txt", "r", encoding="utf-8")
         lines = file.readlines()
         file.close()
         if len(lines) > 0 and name is None:
             lines[0] = encrypted
-            with open(f"discord_storage/{rem_id}.txt", "w", encoding="utf-8") as f:
+            with open(f"discord_storage/{str(guild_id)}/{str(user_id)}.txt", "w", encoding="utf-8") as f:
                 for line in lines:
                     f.write(line)
             await interaction.response.send_message(f"I have remembered: {to_remember}.")
@@ -56,19 +57,19 @@ class RememberCommand(commands.Cog):
                 count = len(lines)
             if count == len(lines) and not len(lines) == 1:
                 lines[1] = f"{name}:\n{encrypted}\n" + lines[1]
-                with open(f"discord_storage/{rem_id}.txt", "w", encoding="utf-8") as file:
+                with open(f"discord_storage/{str(guild_id)}/{str(user_id)}.txt", "w", encoding="utf-8") as file:
                     for line in lines:
                         file.write(line)
                 await interaction.response.send_message(f"Under the name: {name}. I have remembered: {to_remember}.")
                 return
             elif count == len(lines) and len(lines) == 1:
-                with open(f"discord_storage/{rem_id}.txt", "a", encoding="utf-8") as file:
+                with open(f"discord_storage/{str(guild_id)}/{str(user_id)}.txt", "a", encoding="utf-8") as file:
                     file.write(f"\n{name}:\n{encrypted}")
                 await interaction.response.send_message(f"Under the name: {name}. I have remembered: {to_remember}.")
                 return
             if count < len(lines):
                 lines[count] = encrypted + "\n"
-                with open(f"discord_storage/{rem_id}.txt", "w", encoding="utf-8") as file:
+                with open(f"discord_storage/{str(guild_id)}/{str(user_id)}.txt", "w", encoding="utf-8") as file:
                     for line in lines:
                         file.write(line)
                 await interaction.response.send_message(f"Under the name: {name}. I have remembered: {to_remember}.")
