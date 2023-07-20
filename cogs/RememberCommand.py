@@ -26,12 +26,16 @@ class RememberCommand(commands.Cog):
 
 
         if not os.path.exists(f"discord_storage/{str(guild_id)}/{str(user_id)}.txt") and name is None:
+            # Case: something is to be remembered for the first time with no name
+
             os.mkdir(f"discord_storage/{str(guild_id)}/")
             with open(f"discord_storage/{str(guild_id)}/{str(user_id)}.txt", "w", encoding="utf-8") as file:
                 file.write(encrypted)
             await interaction.response.send_message(f"I have remembered: {to_remember}.")
             return
         elif not os.path.exists(f"discord_storage/{str(guild_id)}/{str(user_id)}.txt"):
+            # Case: something is to be remembered for the first time with name
+
             os.mkdir(f"discord_storage/{str(guild_id)}/")
             with open(f"discord_storage/{str(guild_id)}/{str(user_id)}.txt", "w", encoding="utf-8") as file:
                 file.write(f"\n{name}:\n" + encrypted)
@@ -41,6 +45,8 @@ class RememberCommand(commands.Cog):
         lines = file.readlines()
         file.close()
         if len(lines) > 0 and name is None:
+            # Case: something is to be remembered with no name
+
             lines[0] = encrypted
             with open(f"discord_storage/{str(guild_id)}/{str(user_id)}.txt", "w", encoding="utf-8") as f:
                 for line in lines:
@@ -48,14 +54,19 @@ class RememberCommand(commands.Cog):
             await interaction.response.send_message(f"I have remembered: {to_remember}.")
             return
         elif len(lines) > 0:
+            # Case: something is to be remembered with name
+
             count = 0
             for line in lines:
                 count += 1
                 if line == f"{name}:\n":
                     break
-            if count % 2 != 0:
+            if count % 2 != 0:  # the name must be on an even line if not then t was user written
                 count = len(lines)
+
             if count == len(lines) and not len(lines) == 1:
+                # Case: name is not used
+
                 lines[1] = f"{name}:\n{encrypted}\n" + lines[1]
                 with open(f"discord_storage/{str(guild_id)}/{str(user_id)}.txt", "w", encoding="utf-8") as file:
                     for line in lines:
@@ -63,11 +74,15 @@ class RememberCommand(commands.Cog):
                 await interaction.response.send_message(f"Under the name: {name}. I have remembered: {to_remember}.")
                 return
             elif count == len(lines) and len(lines) == 1:
+                # Case: nothing to remember has yet been set
+
                 with open(f"discord_storage/{str(guild_id)}/{str(user_id)}.txt", "a", encoding="utf-8") as file:
                     file.write(f"\n{name}:\n{encrypted}")
                 await interaction.response.send_message(f"Under the name: {name}. I have remembered: {to_remember}.")
                 return
             if count < len(lines):
+                # Case: name was already used
+
                 lines[count] = encrypted + "\n"
                 with open(f"discord_storage/{str(guild_id)}/{str(user_id)}.txt", "w", encoding="utf-8") as file:
                     for line in lines:
@@ -82,29 +97,38 @@ class RememberCommand(commands.Cog):
         guild_id = interaction.guild_id
         user_id = interaction.user.id
 
-        rec_id = str(user_id) + str(guild_id)
 
         key = keyMaker.keyMaking(user_id, guild_id)
 
-        if not os.path.exists("discord_storage/" + rec_id + ".txt"):
+        if not os.path.exists(f"discord_storage/{str(guild_id)}/{str(user_id)}.txt"):
+            # Case: nothing to remember
+
             await interaction.response.send_message(f"I can not remember anything.")
             return
-        file = open("discord_storage/" + rec_id + ".txt", "r", encoding="utf-8")
+        file = open(f"discord_storage/{str(guild_id)}/{str(user_id)}.txt", "r", encoding="utf-8")
         lines = file.readlines()
         file.close()
         if name is None and lines[0] == "":
+            # Case: file exists yet there is nothing to remember
+
             await interaction.response.send_message(f"I can not remember anything. Maybe try using a name.")
             return
         elif name is None:
+            # Case: standard thing to remember
+
             await interaction.response.send_message(f"I seem to remember: {en_decrypt.decrypt(lines[0], key)}.")
             return
         if name is not None:
+            # Case: something with a name will be recalled
+
             count = 0
             for line in lines:
                 count += 1
                 if line == f"{name}:\n" and count % 2 == 0:
                     break
             if count == len(lines):
+                # Case: name does not exist
+
                 await interaction.response.send_message(f"I can not remember something under the name: {name}.")
                 return
             await interaction.response.send_message(f"Under the name: {name}. I seem to remember: {en_decrypt.decrypt(lines[count], key)}.")
