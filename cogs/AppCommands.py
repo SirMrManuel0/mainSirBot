@@ -44,11 +44,23 @@ class AppCommands(commands.Cog):
         return
 
     @app_commands.command(name="invite", description="creates invite link")
-    async def invite_user(self, interaction: discord.Interaction, uses: int = 1, length_in_seconds: int = 0,
+    async def invite_user(self, interaction: discord.Interaction, uses: int = 1, length_in_seconds: int = 0 ,
                           temporary: bool = False):
+        message = ""
+
+        if length_in_seconds > 2592000:
+            message = "length in seconds can not exceed 2592000 seconds (30 days)," \
+                      " thus it was automatically set to 2592000 seconds (30 days)\n"
+            length_in_seconds = 2592000
+        if uses > 100:
+            message += "uses can not exceed 100, thus it was automatically set to 100\n"
+            uses = 100
         invite = await interaction.guild.text_channels[0].create_invite(max_uses=uses, max_age=length_in_seconds,
                                                                         temporary=temporary)
-        await interaction.response.send_message(invite)
+
+        message += str(invite)
+
+        await interaction.response.send_message(message)
 
 async def setup(client):
     await client.add_cog(AppCommands(client))
