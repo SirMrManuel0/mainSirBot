@@ -43,5 +43,13 @@ class AppCommands(commands.Cog):
         await interaction.response.send_message(lines[line])
         return
 
+    @app_commands.command(name="invite", description="creates invite link")
+    async def invite_user(self, interaction: discord.Interaction, uses: int = 1, length_in_seconds: int = 0,
+                          temporary: bool = False):
+        temporary = bool(temporary)
+        invite = await interaction.guild.text_channels[0].create_invite(max_uses=uses, max_age=length_in_seconds,
+                                                                        temporary=temporary)
+        await interaction.response.send_message(invite)
+
 async def setup(client):
     await client.add_cog(AppCommands(client))
