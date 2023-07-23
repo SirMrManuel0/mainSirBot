@@ -1,6 +1,7 @@
 import discord
 from discord import app_commands
 from discord.ext import commands
+import random
 
 class AppCommands(commands.Cog):
     def __init__(self, client):
@@ -32,6 +33,15 @@ class AppCommands(commands.Cog):
 
         await interaction.response.send_message(f"Pong! {bot_latency}ms.")
 
+    @app_commands.command(name="wwur", description="Sends you what would you rather Questions.")
+    async def ping(self, interaction: discord.Interaction):
+        file = open("discord_storage/wwur.txt")
+        lines = file.readlines()
+        file.close()
+        max_line = len(lines) - 1
+        line = random.randint(0, max_line)
+        await interaction.response.send_message(lines[line])
+        return
 
 async def setup(client):
     await client.add_cog(AppCommands(client))

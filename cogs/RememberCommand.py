@@ -120,6 +120,9 @@ class RememberCommand(commands.Cog):
         elif name is None:
             # Case: standard thing to remember
 
+            if len(lines) == 1:
+                await interaction.response.send_message(f"I seem to remember: {en_decrypt.decrypt(lines[0], key)}.")
+                return
             await interaction.response.send_message(f"I seem to remember: {en_decrypt.decrypt(lines[0], key)[:-1]}.")
             return
         if name is not None:
@@ -242,6 +245,9 @@ class RememberCommand(commands.Cog):
         elif name is None:
             # Case: standard thing to remember
 
+            if len(lines) == 1:
+                await interaction.response.send_message(f"I seem to remember: {en_decrypt.decrypt(lines[0], key)}.")
+                return
             await interaction.response.send_message(f"I seem to remember: {en_decrypt.decrypt(lines[0], key)[:-1]}.")
             return
         if name is not None:
