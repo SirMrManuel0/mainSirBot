@@ -44,8 +44,13 @@ class AppCommands(commands.Cog):
         return
 
     @app_commands.command(name="invite", description="creates invite link")
-    async def invite_user(self, interaction: discord.Interaction, uses: int = 1, length_in_seconds: int = 0 ,
+    async def invite_user(self, interaction: discord.Interaction, uses: int = 0, length_in_seconds: int = 0,
                           temporary: bool = False):
+        if isinstance(interaction.channel, discord.DMChannel):
+            await interaction.response.send_message(
+                "Sorry, but this command is only supported in servers.", ephemeral=True)
+            return
+
         message = ""
 
         if length_in_seconds > 2592000:

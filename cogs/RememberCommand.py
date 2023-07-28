@@ -17,13 +17,17 @@ class RememberCommand(commands.Cog):
 
     @app_commands.command(name="remember", description="give the bot something to remember")
     async def remember(self, interaction: discord.Interaction, to_remember: str, name: str = None):
+        if isinstance(interaction.channel, discord.DMChannel):
+            await interaction.response.send_message(
+                "Sorry, but this command is only supported in servers.", ephemeral=True)
+            return
+
         guild_id = interaction.guild_id
         user_id = interaction.user.id
 
         key = keyMaker.keyMaking(user_id, guild_id)
 
         encrypted = en_decrypt.encrypt(to_remember, key)
-
 
         if not os.path.exists(f"discord_storage/{str(guild_id)}/{str(user_id)}.txt") and name is None:
             # Case: something is to be remembered for the first time with no name
@@ -95,9 +99,13 @@ class RememberCommand(commands.Cog):
                 return
         await interaction.response.send_message(f"I can not remember: {to_remember}")
 
-
     @app_commands.command(name="recall", description="remember what the bot saved")
     async def recall(self, interaction: discord.Interaction, name: str = None):
+        if isinstance(interaction.channel, discord.DMChannel):
+            await interaction.response.send_message(
+                "Sorry, but this command is only supported in servers.", ephemeral=True)
+            return
+
         guild_id = interaction.guild_id
         user_id = interaction.user.id
 
@@ -140,11 +148,13 @@ class RememberCommand(commands.Cog):
                 return
             await interaction.response.send_message(f"Under the name: {name}. I seem to remember: {en_decrypt.decrypt(lines[count], key)[:-1]}.")
 
-
-
-
     @app_commands.command(name="server_remember", description="give the bot something to remember and everyone to recall")
     async def server_remember(self, interaction: discord.Interaction, to_remember: str, name: str = None):
+        if isinstance(interaction.channel, discord.DMChannel):
+            await interaction.response.send_message(
+                "Sorry, but this command is only supported in servers.", ephemeral=True)
+            return
+
         guild_id = interaction.guild_id
 
         key = keyMaker.keyMakingServer(guild_id)
@@ -225,6 +235,11 @@ class RememberCommand(commands.Cog):
 
     @app_commands.command(name="server_recall", description="remember what the bot saved for the server")
     async def server_recall(self, interaction: discord.Interaction, name: str = None):
+        if isinstance(interaction.channel, discord.DMChannel):
+            await interaction.response.send_message(
+                "Sorry, but this command is only supported in servers.", ephemeral=True)
+            return
+
         guild_id = interaction.guild_id
 
         key = keyMaker.keyMakingServer(guild_id)

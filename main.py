@@ -27,3 +27,14 @@ async def main():
         await client.start(apiToken.discord_token)
 
 asyncio.run(main())
+
+
+
+
+
+
+
+
+
+
+
