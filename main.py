@@ -26,15 +26,7 @@ async def main():
         await load()
         await client.start(apiToken.discord_token)
 
-asyncio.run(main())
-
-
-
-
-
-
-
-
-
-
-
+try:
+    asyncio.run(main())
+except KeyboardInterrupt:
+    print("#" * 50 + "\nBot is offline!")
