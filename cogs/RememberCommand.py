@@ -36,7 +36,7 @@ class RememberCommand(commands.Cog):
                 os.mkdir(f"discord_storage/{str(guild_id)}/")
 
             with open(f"discord_storage/{str(guild_id)}/{str(user_id)}.txt", "w", encoding="utf-8") as file:
-                file.write(encrypted)
+                file.write(encrypted + "\n")
             await interaction.response.send_message(f"I have remembered: {to_remember}.")
             return
         elif not os.path.exists(f"discord_storage/{str(guild_id)}/{str(user_id)}.txt"):
@@ -46,7 +46,7 @@ class RememberCommand(commands.Cog):
                 os.mkdir(f"discord_storage/{str(guild_id)}/")
 
             with open(f"discord_storage/{str(guild_id)}/{str(user_id)}.txt", "w", encoding="utf-8") as file:
-                file.write(f"\n{name}:\n" + encrypted)
+                file.write(f"\n{name}:\n" + encrypted + "\n")
             await interaction.response.send_message(f"Under the name: {name}. I have remembered: {to_remember}.")
             return
         file = open(f"discord_storage/{str(guild_id)}/{str(user_id)}.txt", "r", encoding="utf-8")
@@ -66,11 +66,9 @@ class RememberCommand(commands.Cog):
 
             count = 0
             for line in lines:
-                count += 1
                 if line == f"{name}:\n":
                     break
-            if count % 2 != 0:  # the name must be on an even line if not then it was user written
-                count = len(lines)
+                count += 1
 
             if count == len(lines) and not len(lines) == 1:
                 # Case: name is not used
@@ -85,13 +83,13 @@ class RememberCommand(commands.Cog):
                 # Case: nothing to remember has yet been set with name
 
                 with open(f"discord_storage/{str(guild_id)}/{str(user_id)}.txt", "a", encoding="utf-8") as file:
-                    file.write(f"\n{name}:\n{encrypted}")
+                    file.write(f"{name}:\n{encrypted}\n")
                 await interaction.response.send_message(f"Under the name: {name}. I have remembered: {to_remember}.")
                 return
             if count < len(lines):
                 # Case: name was already used
 
-                lines[count] = encrypted + "\n"
+                lines[count + 1] = encrypted + "\n"
                 with open(f"discord_storage/{str(guild_id)}/{str(user_id)}.txt", "w", encoding="utf-8") as file:
                     for line in lines:
                         file.write(line)
@@ -128,9 +126,6 @@ class RememberCommand(commands.Cog):
         elif name is None:
             # Case: standard thing to remember
 
-            if len(lines) == 1:
-                await interaction.response.send_message(f"I seem to remember: {en_decrypt.decrypt(lines[0], key)}.")
-                return
             await interaction.response.send_message(f"I seem to remember: {en_decrypt.decrypt(lines[0], key)[:-1]}.")
             return
         if name is not None:
@@ -168,7 +163,7 @@ class RememberCommand(commands.Cog):
                 os.mkdir(f"discord_storage/{str(guild_id)}/")
 
             with open(f"discord_storage/{str(guild_id)}/{str(guild_id)}.txt", "w", encoding="utf-8") as file:
-                file.write(encrypted)
+                file.write(encrypted + "\n")
             await interaction.response.send_message(f"I have remembered: {to_remember}.")
             return
         elif not os.path.exists(f"discord_storage/{str(guild_id)}/{str(guild_id)}.txt"):
@@ -178,7 +173,7 @@ class RememberCommand(commands.Cog):
                 os.mkdir(f"discord_storage/{str(guild_id)}/")
 
             with open(f"discord_storage/{str(guild_id)}/{str(guild_id)}.txt", "w", encoding="utf-8") as file:
-                file.write(f"\n{name}:\n" + encrypted)
+                file.write(f"\n{name}:\n" + encrypted + "\n")
             await interaction.response.send_message(f"Under the name: {name}. I have remembered: {to_remember}.")
             return
         file = open(f"discord_storage/{str(guild_id)}/{str(guild_id)}.txt", "r", encoding="utf-8")
@@ -198,11 +193,9 @@ class RememberCommand(commands.Cog):
 
             count = 0
             for line in lines:
-                count += 1
                 if line == f"{name}:\n":
                     break
-            if count % 2 != 0:  # the name must be on an even line if not then it was user written
-                count = len(lines)
+                count += 1
 
             if count == len(lines) and not len(lines) == 1:
                 # Case: name is not used
@@ -217,13 +210,13 @@ class RememberCommand(commands.Cog):
                 # Case: nothing to remember has yet been set with name
 
                 with open(f"discord_storage/{str(guild_id)}/{str(guild_id)}.txt", "a", encoding="utf-8") as file:
-                    file.write(f"\n{name}:\n{encrypted}")
+                    file.write(f"{name}:\n{encrypted}\n")
                 await interaction.response.send_message(f"Under the name: {name}. I have remembered: {to_remember}.")
                 return
             if count < len(lines):
                 # Case: name was already used
 
-                lines[count] = encrypted + "\n"
+                lines[count + 1] = encrypted + "\n"
                 with open(f"discord_storage/{str(guild_id)}/{str(guild_id)}.txt", "w", encoding="utf-8") as file:
                     for line in lines:
                         file.write(line)
